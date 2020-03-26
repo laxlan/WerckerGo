@@ -1,15 +1,15 @@
 build:
   box: alpine
   docker: true
-  steps:
+  steps: 
     - script:
         name: Install docker
-        code: apk --no-cache add docker
+        code: apk --no-cache add docker    
     - script:
         name: Install Curl
-        code: apk --no-cache add curl
+        code: apk --no-cache add curl         
     - script:
-        name: Explore the docker daemon
+        name: Explore the docker daemon 
         code: |
           echo DOCKER_NETWORK_NAME=$DOCKER_NETWORK_NAME
           echo DOCKER_HOST=$DOCKER_HOST
@@ -22,39 +22,38 @@ build:
           echo listing the docker networks
           docker network list
     - script:
-        name: create an image from the Dockerfile using docker build
+        name: create an image from the Dockerfile using docker build 
         code: |
           docker build -t docker.io/$USERNAME/direct-docker-golang:latest .
           echo running docker images
           docker images
     - script:
-        name: start the newly-created image using docker run
+        name: start the newly-created image using docker run 
         code: |
           docker run --rm -d -p 5000:5000 --name testcontainer \
             --network=$DOCKER_NETWORK_NAME docker.io/$USERNAME/direct-docker-golang:latest
           echo running docker ps
           docker ps
-    - script:
-        name: Wait for container to start
-        code: |
-          until $(curl --output /dev/null --silent --head --fail http://testcontainer:5000); do printf '.'; sleep 5; done
-          
-    - script:
+    - script: 
+        name: Wait for container to start 
+        code: | 
+          until $(curl --output /dev/null --silent --head --fail http://testcontainer:5000); do printf '.'; sleep 5; done           
+    - script: 
         name: Test the container that we started using docker-run
         code: |
-            if curlOutput=`curl -s testcontainer:5000`; then
-                export expected="Hello World!!!"
+            if curlOutput=`curl -s testcontainer:5000`; then 
+                export expected="Hello World!!"
                 if [ "$curlOutput" == "$expected" ]; then
                     echo "Test passed: container gave expected response: " $expected
                 else
                     echo "Test failed: container gave unexpected response: " $curlOutput
-                    echo "The expected reponse was: " $expected
+                    echo "The expected response was: " $expected
                     exit 1
-                fi
-            else
+                fi   
+            else 
                 echo "Test failed: container did not respond"
-                exit 1
-            fi
+                exit 1 
+            fi           
     - script:
         name: kill the container using docker kill
         code: |
@@ -62,7 +61,8 @@ build:
           echo running docker ps
           docker ps
     - script:
-        name: push the newly-created image to a repository
+        name: push the newly-create image to a repository
         code: |
-          docker login -u $USERNAME -p $PASSWORD
+          docker login -u $USERNAME -p $PASSWORD 
           docker push docker.io/$USERNAME/direct-docker-golang:latest
+          
