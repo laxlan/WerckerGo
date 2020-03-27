@@ -42,7 +42,7 @@ build:
         name: Test the container that we started using docker-run
         code: |
             if curlOutput=`curl -s testcontainer:5000`; then 
-                export expected="Hello World!!"
+                export expected="Hello World!X!!"
                 if [ "$curlOutput" == "$expected" ]; then
                     echo "Test passed: container gave expected response: " $expected
                 else
